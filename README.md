@@ -1,2 +1,2 @@
-# UPSILON-JS[Υ υ：宇普西龙 Upsilon]
+# UPSILON-JS[Υ υ：Upsilon]
 Small and efficient embedded Internet of Things Javascript engine
