@@ -1,7 +1,7 @@
 #ifndef QUICKJS_BINDMQTT_H
 #define QUICKJS_BINDMQTT_H
 
-#include "../../../../quickjs.h"
+#include "quickjs.h"
 
 
 #ifdef JS_SHARED_LIBRARY
