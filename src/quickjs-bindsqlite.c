@@ -60,10 +60,8 @@ static JSValue sqlite3SqlExec(JSContext *ctx, JSValueConst this_val, int argc, J
 	ret = sqlite3_exec(ppDb,sql, NULL ,NULL, &errMsg);
 	if(ret != SQLITE_OK){
 		printf("sqlite3_exec err %s\n",errMsg);
-		sqlite3_free(errMsg);
 	}
 
-	printf("sql: %s exec ok\n", sql);
     sqlite3_free(errMsg);
     return JS_UNDEFINED;
 }
@@ -77,7 +75,10 @@ static JSValue sqlite3Select(JSContext *ctx, JSValueConst this_val, int argc, JS
     int nRow, nCol, ret;
 	char **pazResult = NULL;
     char *errMsg = NULL;
+    /* 创建一个 JS 数组 */
+    JSValue resultArray = JS_NewArray(ctx);
     char* sql = JS_ToCString(ctx, argv[0]);
+
 	ret = sqlite3_get_table(ppDb, sql, &pazResult, &nRow, &nCol, &errMsg);
 	if(ret != SQLITE_OK){
 		printf("sqlite3_get_table err %s\n",errMsg);
@@ -85,14 +86,16 @@ static JSValue sqlite3Select(JSContext *ctx, JSValueConst this_val, int argc, JS
 		return JS_UNDEFINED;
 	}
 
-	printf("nRow = %d , nCol = %d\n", nRow, nCol);
-	for(int i = 0; i < nCol*(nRow+1); i++){
-		printf("pazResult[%d] = %s\n",i,pazResult[i]);
-	}
+    /* 把结果数组封装为JS数组 */
+    for (int i = 0; i < nCol*(nRow+1); i++)
+    {
+        JSValue res = JS_NewString(ctx, pazResult[i]);
+        JS_SetPropertyInt64(ctx, resultArray, i, res);
+    }
 
 	//正确且安全的释放内存
 	sqlite3_free_table(pazResult);
-    return JS_NewString(ctx, "halalal");
+    return resultArray;
 }
 
 
