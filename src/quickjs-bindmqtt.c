@@ -58,8 +58,6 @@ int myconnect(MQTTClient client)
 	conn_opts.username = opts.username;
 	conn_opts.password = opts.password;
 	conn_opts.MQTTVersion = opts.MQTTVersion;
-	conn_opts.httpProxy = opts.http_proxy;
-	conn_opts.httpsProxy = opts.https_proxy;
 
 	if (opts.will_topic) 	/* will options */
 	{

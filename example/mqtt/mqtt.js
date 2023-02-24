@@ -1,4 +1,4 @@
-import {mqttClass} from './qjsbindmqtt.so'
+import {mqttClass} from './quickjs-bindmqtt.so'
 import * as std from "std";
 import * as os from "os";
 
@@ -27,6 +27,7 @@ for (let index = 0; index < 10000000000; index++) {
     if(count == 0)
     {
         srv.mqttPublish("path/to/my/topic", "hello world", 111)
+        count++;
     }
 }
 
