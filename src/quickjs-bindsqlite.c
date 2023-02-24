@@ -14,8 +14,10 @@
 #include "sqlite3.h"
 #include "quickjs-bindsqlite.h"
 
+
 /* 数据库操作句柄 */
 sqlite3 *ppDb = NULL;
+
 
 /**
  * 打开数据库链接
@@ -36,6 +38,7 @@ static JSValue sqlite3Open(JSContext *ctx, JSValueConst this_val, int argc, JSVa
     return JS_NewInt32(ctx, 1);
 }
 
+
 /**
  * 关闭数据库链接
 */
@@ -44,6 +47,7 @@ static JSValue sqlite3Close(JSContext *ctx, JSValueConst this_val, int argc, JSV
     sqlite3_close(ppDb);
     return JS_UNDEFINED;
 }
+
 
 /**
  * SQL执行
@@ -92,6 +96,14 @@ static JSValue sqlite3Select(JSContext *ctx, JSValueConst this_val, int argc, JS
 }
 
 
+/* 类方法列表填充 */
+static const JSCFunctionListEntry sqlite_class_funcs[] = {
+    JS_CFUNC_DEF("sqlite3Open", 1, sqlite3Open),
+    JS_CFUNC_DEF("sqlite3Close", 0, sqlite3Close),
+    JS_CFUNC_DEF("sqlite3SqlExec", 1, sqlite3SqlExec),
+    JS_CFUNC_DEF("sqlite3Select", 1, sqlite3Select),
+};
+
 
 /* 构造方法 */
 static JSValue sqliteContructor(
@@ -101,15 +113,6 @@ static JSValue sqliteContructor(
     JSValue obj = JS_NewObjectClass(ctx, sqliteClass.id);
     return obj;
 }
-
-
-/* 类方法列表填充 */
-static const JSCFunctionListEntry sqlite_class_funcs[] = {
-    JS_CFUNC_DEF("sqlite3Close", 1, sqlite3Close),
-    JS_CFUNC_DEF("sqlite3Open", 0, sqlite3Open),
-    JS_CFUNC_DEF("sqlite3SqlExec", 1, sqlite3SqlExec),
-    JS_CFUNC_DEF("sqlite3Select", 1, sqlite3Select),
-};
 
 
 /* 当前类数据结构 */
