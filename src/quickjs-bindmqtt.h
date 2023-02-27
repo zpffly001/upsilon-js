@@ -1,15 +1,10 @@
-#ifndef QUICKJS_BINDMQTT_H
-#define QUICKJS_BINDMQTT_H
+#ifndef QUICKJS_MQTT_H
+#define QUICKJS_MQTT_H
 
 #include "quickjs.h"
 
 
-#ifdef JS_SHARED_LIBRARY
 #define JS_INIT_MQTT_MODULE js_init_module
-#else
-// #define JS_INIT_MQTT_MODULE js_init_module_mqtt
-#define JS_INIT_MQTT_MODULE js_init_module
-#endif
 
 typedef struct JSContructorDef_s {
     JSCFunction *fn;
@@ -30,4 +25,4 @@ typedef struct JSFullClassDef_s
 
 extern JSFullClassDef mqttClass;
 
-#endif /* QUICKJS_BINDMQTT_H */
+#endif /* QUICKJS_MQTT_H */
