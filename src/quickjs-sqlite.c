@@ -4,15 +4,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <memory.h>
-#include <signal.h>
-#include <sys/time.h>
+
 
 #include "quickjs.h"
-#include "cutils.h"
-#include "list.h"
-#include "quickjs-bindmqtt.h"
 #include "sqlite3.h"
-#include "quickjs-bindsqlite.h"
+#include "quickjs-sqlite.h"
 
 
 /* 数据库操作句柄 */

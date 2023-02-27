@@ -1,4 +1,4 @@
-import {sqliteClass} from '../../src/qjsbindsqlite.so'
+import {sqliteClass} from 'quickjs-sqlite.so'
 import * as std from "std";
 import * as os from "os";
 

@@ -10,7 +10,7 @@
 #include "quickjs.h"
 #include "cutils.h"
 #include "list.h"
-#include "quickjs-bindmqtt.h"
+#include "quickjs-mqtt.h"
 
 #include "MQTTClient.h"
 #include "MQTTClientPersistence.h"

@@ -1,4 +1,4 @@
-import {mqttClass} from './quickjs-bindmqtt.so'
+import {mqttClass} from './quickjs-mqtt.so'
 import * as std from "std";
 import * as os from "os";
 
