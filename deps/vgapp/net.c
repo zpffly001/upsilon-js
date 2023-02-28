@@ -52,6 +52,7 @@ VBARLIB_API int vbar_net_card_enable(uint8_t type, bool on)
 VBARLIB_API int vbar_net_status_callback_register(vbar_net_status_cb func, void *pdata)
 {
     printf("vbar_net_status_callback_register\n");
+    func(1, VBAR_NET_STATUS_NONE, "123");
     return 1;
 }
 
