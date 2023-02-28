@@ -25,7 +25,6 @@ VBARLIB_API int vbar_net_init(void)
 VBARLIB_API void vbar_net_exit(void)
 {
     printf("vbar_net_exit\n");
-    return 1;
 }
 
 /**

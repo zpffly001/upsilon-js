@@ -1,15 +1,54 @@
 #include <stdio.h>
 #include <string.h>
-#include <stddef.h>
+// #include <stddef.h>
 
 #include "channel.h"
 
+int channel_send(struct vbar_channel * channel, const unsigned char * buf, size_t len)
+{
+    printf("send\n");
+    return 1;
+}
+
+int channel_recv(struct vbar_channel * channel, const unsigned char * buf, size_t len)
+{
+    printf("recv\n");
+    return 1;
+}
+
+int channel_ioctl(struct vbar_channel * channel, int value, size_t len)
+{
+    printf("ioctl\n");
+    return 1;
+}
+
+int channel_flush(struct vbar_channel * channel, int value)
+{
+    printf("flush\n");
+    return 1;
+}
+
+int channel_close(struct vbar_channel * channel)
+{
+    printf("close\n");
+    return 1;
+}
+
+static struct vbar_channel channel =
+{
+    .send = channel_send,
+    .recv = channel_recv,
+    .ioctl = channel_ioctl,
+    .flush = channel_flush,
+    .close = channel_close,
+};
 
 /* 打开信道 */
 VBARLIB_API struct vbar_channel *vbar_channel_open(int type, unsigned long arg)
 {
     printf("vbar_channel_open\n");
-    return NULL;
+    channel.type = type;
+    return &channel;
 }
 
 /* 发送数据 */
