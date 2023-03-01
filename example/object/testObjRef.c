@@ -1,42 +1,31 @@
 /**
- * 测试c结构体转换为js对象
- * gcc -fPIC -o test_obj.o -c test_obj.c -I../../include/quickjs/master
- * gcc -shared -o test_obj.so test_obj.o
+ * 测试对象的引用传递 把js对象传递给c c修改后，js这边对象属性内容也随之修改
+ * gcc -fPIC -o testObjRef.o -c testObjRef.c -I../../include/quickjs/master
+ * gcc -shared -o testObjRef.so testObjRef.o
  */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <quickjs.h>
+#include "quickjs.h"
 
 #define JS_INIT_MODULE js_init_module
 #define countof(x) (sizeof(x) / sizeof((x)[0]))
 
-typedef struct {
-    int id;
-    char name[100];
-    double balance;
-} Account;
 
 
-static JSValue js_get_obj(JSContext *ctx, JSValueConst this_val,
+static JSValue js_obj_ref(JSContext *ctx, JSValueConst this_val,
                            int argc, JSValueConst *argv)
 {
-    Account account = { 123, "Alice", 1000.0 };
-
-    JSValue obj = JS_NewObject(ctx);
-
-    JS_DefinePropertyValueStr(ctx, obj, "id", JS_NewInt32(ctx, account.id), JS_PROP_C_W_E);
-    JS_DefinePropertyValueStr(ctx, obj, "name", JS_NewString(ctx, account.name), JS_PROP_C_W_E);
-    JS_DefinePropertyValueStr(ctx, obj, "balance", JS_NewFloat64(ctx, account.balance), JS_PROP_C_W_E);
-
-    // use the JSValue object...
-    return obj;
+    JSValue obj = argv[0];
+    JS_SetPropertyStr(ctx, obj, "name", JS_NewString(ctx, "ikun"));
+    printf("objRef\n");
+    return JS_UNDEFINED;
 }
 
 /* 定义API的函数入口名称及列表 */
 static const JSCFunctionListEntry js_test_funcs[] = {
     /* JS_CFUNC_DEF(函数入口名称，入参个数，QuickJS C 函数) */
-    JS_CFUNC_DEF("getObj", 0, js_get_obj),
+    JS_CFUNC_DEF("objRef", 0, js_obj_ref),
 };
 
 /* 定义初始化回调方法（由系统调用，入参格式固定），将函数入口列表 在模块中暴露 */

@@ -1,3 +1,6 @@
+/**
+ * 测试c结构体转换为js对象
+ */
 import * as std from "std";
 import * as os from "os";
 import {getObj} from "./test_obj.so";
