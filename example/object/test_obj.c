@@ -11,10 +11,19 @@
 #define JS_INIT_MODULE js_init_module
 #define countof(x) (sizeof(x) / sizeof((x)[0]))
 
+struct mode
+{
+    int modeNum;
+    char *modeName;
+};
+
+
 typedef struct {
     int id;
     char name[100];
     double balance;
+    struct mode *mymode1;
+    struct mode mymode2;
 } Account;
 
 
@@ -28,6 +37,16 @@ static JSValue js_get_obj(JSContext *ctx, JSValueConst this_val,
     JS_DefinePropertyValueStr(ctx, obj, "id", JS_NewInt32(ctx, account.id), JS_PROP_C_W_E);
     JS_DefinePropertyValueStr(ctx, obj, "name", JS_NewString(ctx, account.name), JS_PROP_C_W_E);
     JS_DefinePropertyValueStr(ctx, obj, "balance", JS_NewFloat64(ctx, account.balance), JS_PROP_C_W_E);
+
+    JSValue modeObj1 = JS_NewObject(ctx);
+    JS_SetPropertyStr(ctx, modeObj1, "modeNum", JS_NewInt32(ctx, 88));
+    JS_SetPropertyStr(ctx, modeObj1, "modeName", JS_NewString(ctx, "xiaoli"));
+    JS_SetPropertyStr(ctx, obj, "mymode1", modeObj1);
+
+    JSValue modeObj2 = JS_NewObject(ctx);
+    JS_SetPropertyStr(ctx, modeObj2, "modeNum", JS_NewInt32(ctx, 99));
+    JS_SetPropertyStr(ctx, modeObj2, "modeName", JS_NewString(ctx, "xiaowang"));
+    JS_SetPropertyStr(ctx, obj, "mymode2", modeObj2);
 
     // use the JSValue object...
     return obj;
