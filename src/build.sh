@@ -46,7 +46,7 @@ sudo ldconfig
 gcc -c -fPIC -o quickjs-gpio.o quickjs-gpio.c -I../include/vgapp -I../include/quickjs/master
 
 # version: 1.3.12 quickjs-gpio.o libgpio.so ---> quickjs-gpio.so
-gcc -shared -o quickjs-gpio.so quickjs-gpio.o -lgpio -L../lib
+gcc -shared -o quickjs-gpio.so quickjs-gpio.o -lgpio -L../lib/vgapp
 
 # 是为了在mqtt require的时候，去/home/zpf/software/upsilon-js/local路径找gpio.so
 sudo vi /etc/ld.so.conf
@@ -56,8 +56,20 @@ sudo ldconfig
 #--------------------------------------------gpio模块-----------------------------------------------------
 
 
-# uart模块
+# channel模块
+#--------------------------------------------channel模块-----------------------------------------------------
+# quickjs-channel.c --->quickjs-channel.o
+gcc -c -fPIC -o quickjs-channel.o quickjs-channel.c -I../include/vgapp -I../include/quickjs/master
 
+# version: 1.3.12 quickjs-channel.o libchannel.so ---> quickjs-channel.so
+gcc -shared -o quickjs-channel.so quickjs-channel.o -lchannel -L../lib/vgapp
+
+# 是为了在mqtt require的时候，去/home/zpf/software/upsilon-js/local路径找channel.so
+sudo vi /etc/ld.so.conf
+/home/zpf/software/upsilon-js/local
+sudo /sbin/ldconfig -v
+sudo ldconfig
+#--------------------------------------------channel模块-----------------------------------------------------
 
 
 # net模块

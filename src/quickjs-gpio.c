@@ -77,6 +77,8 @@ static JSValue gpioSetFunc(JSContext *ctx, JSValueConst this_val, int argc, JSVa
     if (gpioFunction == 0)
     {
         func = RED;
+    }else{
+        func = BLUE;
     }
 
     /* 设置指定gpio功能  param gpio  gpio值  param func  功能类型 */

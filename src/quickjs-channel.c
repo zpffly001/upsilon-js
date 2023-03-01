@@ -10,6 +10,8 @@
 #include "quickjs-channel.h"
 #include "channel.h"
 
+struct vbar_channel *channel;
+
 /**
  * @brief 打开信道
  */
@@ -17,7 +19,9 @@ static JSValue channelOpen(JSContext *ctx, JSValueConst this_val, int argc, JSVa
 {
     int type;
     unsigned long arg;
-    struct vbar_channel *channel = vbar_channel_open(type, arg);
+    JS_ToInt32(ctx, &type, argv[0]);
+    JS_ToInt64(ctx, &arg, argv[1]);
+    channel = vbar_channel_open(type, arg);
     return JS_UNDEFINED;
 }
 
@@ -26,10 +30,10 @@ static JSValue channelOpen(JSContext *ctx, JSValueConst this_val, int argc, JSVa
  */
 static JSValue channelSend(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv)
 {
-    struct vbar_channel *channel;
-    const unsigned char *buffer;
-    size_t length;
+    const unsigned char *buffer = JS_ToCString(ctx, argv[0]);
+    size_t length = 9;
     int res = vbar_channel_send(channel, buffer, length);
+
     return JS_NewInt32(ctx, res);
 }
 
@@ -38,11 +42,16 @@ static JSValue channelSend(JSContext *ctx, JSValueConst this_val, int argc, JSVa
  */
 static JSValue channelRecv(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv)
 {
-    struct vbar_channel *channel;
-    unsigned char *buffer;
-    size_t size;
-    int milliseconds;
+    unsigned char buffer[6];
+    size_t size = 6;
+    int milliseconds = 3000;
     int res = vbar_channel_recv(channel, buffer, size, milliseconds);
+
+    for (size_t i = 0; i < size; i++)
+    {
+        printf("recv[%d]: %c\n", i, buffer[i]);
+    }
+
     return JS_NewInt32(ctx, res);
 }
 
@@ -51,9 +60,10 @@ static JSValue channelRecv(JSContext *ctx, JSValueConst this_val, int argc, JSVa
  */
 static JSValue channelIoctl(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv)
 {
-    struct vbar_channel *channel;
     int request;
     unsigned long arg;
+    JS_ToInt32(ctx, &request, argv[0]);
+    JS_ToInt64(ctx, &arg, argv[1]);
     int res = vbar_channel_ioctl(channel, request, arg);
     return JS_NewInt32(ctx, res);
 }
@@ -63,7 +73,6 @@ static JSValue channelIoctl(JSContext *ctx, JSValueConst this_val, int argc, JSV
  */
 static JSValue channelClose(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv)
 {
-    struct vbar_channel *channel;
     vbar_channel_close(channel);
     return JS_UNDEFINED;
 }
@@ -73,8 +82,8 @@ static JSValue channelClose(JSContext *ctx, JSValueConst this_val, int argc, JSV
  */
 static JSValue channelFlush(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv)
 {
-    struct vbar_channel *channel;
     int queue_selector;
+    JS_ToInt32(ctx, &queue_selector, argv[0]);
     int res = vbar_channel_flush(channel, queue_selector);
     return JS_NewInt32(ctx, res);
 }
