@@ -4,11 +4,23 @@
 #include <stdio.h>
 #include<stddef.h>
 
-
+#include "net.h"
 #include "quickjs.h"
 #include "quickjs-common.h"
 #include "quickjs-net.h"
-#include "net.h"
+
+JSValue netStatusFunction;
+JSContext *currentCtx;
+
+/**
+ * @brief 注册网络状态回调函数
+ */
+void netStatusCallback(uint8_t type, enum net_status status, void *pdata)
+{
+
+    JSValue result = JS_Call(currentCtx, netStatusFunction, JS_UNDEFINED, 0, NULL);
+
+}
 
 
 /**
@@ -47,8 +59,10 @@ static JSValue netCardEnable(JSContext *ctx, JSValueConst this_val, int argc, JS
  */
 static JSValue netStatusCallbackRegister(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv)
 {
-    vbar_net_status_cb func;
-    void *pdata;
+    netStatusFunction = argv[0];
+    currentCtx = ctx;
+    vbar_net_status_cb func = netStatusCallback;
+    void *pdata = "123"; // int string obj
     int res = vbar_net_status_callback_register(func, pdata);
     return JS_NewInt32(ctx, res);
 }
@@ -61,6 +75,19 @@ static JSValue netSetModeByCard(JSContext *ctx, JSValueConst this_val, int argc,
     uint8_t type;
     enum net_mode mode;
     struct net_static_param *param;
+    JS_ToInt32(ctx, &type, argv[0]);
+    JS_ToInt32(ctx, &mode, argv[0]);
+    /* JS对象转化为C结构体 */
+    char *ip = JS_ToCString(ctx, argv[1]);
+    for (size_t i = 0; i < 10; i++)
+    {
+        param->ip[i] = ip[i];
+        printf("%c", param->ip[i]);
+    }
+
+    /* todo 其余的gateway netmask dns0 dns1 也是一样 */
+
+
     int res = vbar_net_set_mode_by_card(type, mode, param);
     return JS_NewInt32(ctx, res);
 }
@@ -72,7 +99,23 @@ static JSValue netGetModeByCard(JSContext *ctx, JSValueConst this_val, int argc,
 {
     uint8_t type;
     struct net_static_param *param;
+
+    /* 获取网卡模式以及参数 */
     int res = vbar_net_get_mode_by_card(type, param);
+
+    /* 把获取到的模式以及参数转化为js类型 */
+    JSValue netModeInfo = JS_NewObject(ctx);
+    JS_SetPropertyStr(ctx, netModeInfo, "type", JS_NewInt32(ctx, type));
+
+    JSValue netParam = JS_NewObject(ctx);
+    JS_SetPropertyStr(ctx, netModeInfo, "ip", JS_NewStringLen(ctx, param->ip, 20));
+    JS_SetPropertyStr(ctx, netModeInfo, "gateway", JS_NewStringLen(ctx, param->gateway, 20));
+    JS_SetPropertyStr(ctx, netModeInfo, "netmask", JS_NewStringLen(ctx, param->netmask, 20));
+    JS_SetPropertyStr(ctx, netModeInfo, "dns0", JS_NewStringLen(ctx, param->dns0, 20));
+    JS_SetPropertyStr(ctx, netModeInfo, "dns1", JS_NewStringLen(ctx, param->dns1, 20));
+
+    JS_SetPropertyStr(ctx, netModeInfo, "param", netParam);
+
     return JS_NewInt32(ctx, res);
 }
 
@@ -102,7 +145,7 @@ static JSValue netGetStatus(JSContext *ctx, JSValueConst this_val, int argc, JSV
 {
     enum net_status status = vbar_net_get_status();
     // 此处应该返回enum，可以和js中的enum做一个映射
-    return JS_NewInt32(ctx, 1);
+    return JS_NewInt32(ctx, status);
 }
 
 /**
@@ -111,6 +154,7 @@ static JSValue netGetStatus(JSContext *ctx, JSValueConst this_val, int argc, JSV
 static JSValue netSetStatus(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv)
 {
     enum net_status status;
+    JS_ToInt32(ctx, &status, argv[0]);
     vbar_net_set_status(status);
     return JS_UNDEFINED;
 }
@@ -124,6 +168,7 @@ static JSValue netGetWifiSsidList(JSContext *ctx, JSValueConst this_val, int arg
     uint32_t timeout_ms;
     uint32_t interval_ms;
     int res = vbar_net_get_wifi_ssid_list(list, timeout_ms, interval_ms);
+    /* TODO 待优化 */
     return JS_NewInt32(ctx, res);
 }
 
@@ -132,9 +177,9 @@ static JSValue netGetWifiSsidList(JSContext *ctx, JSValueConst this_val, int arg
  */
 static JSValue netConnectWifiSsid(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv)
 {
-    const char *ssid;
-    const char *psk;
-    const char *params;
+    const char *ssid = JS_ToCString(ctx, argv[0]);
+    const char *psk = JS_ToCString(ctx, argv[1]);
+    const char *params = JS_ToCString(ctx, argv[2]);
     int res = vbar_net_connect_wifi_ssid(ssid, psk, params);
     return JS_NewInt32(ctx, res);
 }
@@ -146,6 +191,7 @@ static JSValue netGetWifiSavedList(JSContext *ctx, JSValueConst this_val, int ar
 {
     struct vbar_wifi_save_list *list;
     int res = vbar_net_get_wifi_saved_list(list);
+    /* TODO 待优化 */
     return JS_NewInt32(ctx, res);
 }
 
@@ -157,6 +203,7 @@ static JSValue netGetCurrentWifiInfo(JSContext *ctx, JSValueConst this_val, int 
     struct vbar_wpa_wifi_info *info;
     uint32_t timeout_ms;
     int res = vbar_net_get_current_wifi_info(info, timeout_ms);
+    /* TODO 待优化 */
     return JS_NewInt32(ctx, res);
 }
 
@@ -166,6 +213,7 @@ static JSValue netGetCurrentWifiInfo(JSContext *ctx, JSValueConst this_val, int 
 static JSValue netNetConnectSavedWifi(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv)
 {
     uint16_t id;
+    JS_ToUint32(ctx, &id, argv[0]);
     int res = vbar_net_connect_saved_wifi(id);
     return JS_NewInt32(ctx, res);
 }
