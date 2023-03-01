@@ -31,10 +31,12 @@ static JSValue channelOpen(JSContext *ctx, JSValueConst this_val, int argc, JSVa
 static JSValue channelSend(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv)
 {
     const unsigned char *buffer = JS_ToCString(ctx, argv[0]);
-    size_t length = 9;
-    int res = vbar_channel_send(channel, buffer, length);
+    int length;
+    JS_ToInt32(ctx, &length, argv[1]);
+    printf("length: %d\n", length);
+    int res = vbar_channel_send(channel, buffer, 11);
 
-    return JS_NewInt32(ctx, res);
+    return JS_NewInt32(ctx, 1);
 }
 
 /**
@@ -42,9 +44,11 @@ static JSValue channelSend(JSContext *ctx, JSValueConst this_val, int argc, JSVa
  */
 static JSValue channelRecv(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv)
 {
-    unsigned char buffer[6];
-    size_t size = 6;
-    int milliseconds = 3000;
+    unsigned char *buffer;
+    size_t size;
+    int milliseconds;
+    buffer = JS_GetArrayBuffer(ctx, &size, argv[0]);
+    JS_ToInt32(ctx, &milliseconds, argv[1]);
     int res = vbar_channel_recv(channel, buffer, size, milliseconds);
 
     for (size_t i = 0; i < size; i++)
