@@ -55,6 +55,11 @@ VBARLIB_API struct vbar_channel *vbar_channel_open(int type, unsigned long arg)
 VBARLIB_API int vbar_channel_send(struct vbar_channel *channel,
                                   const unsigned char *buffer, size_t length)
 {
+    for (size_t i = 0; i < length; i++)
+    {
+        printf("send[%d]: %d\n", i, buffer[i]);
+    }
+
     printf("vbar_channel_send\n");
     return 1;
 }
@@ -64,6 +69,12 @@ VBARLIB_API int vbar_channel_recv(struct vbar_channel *channel,
                                   unsigned char *buffer, size_t size, int milliseconds)
 {
     printf("vbar_channel_recv\n");
+    buffer[0] = 0x55;
+    buffer[1] = 0x55;
+    buffer[2] = 0x55;
+    buffer[3] = 0x55;
+    buffer[4] = 0x55;
+    buffer[5] = 0x55;
     return 1;
 }
 
