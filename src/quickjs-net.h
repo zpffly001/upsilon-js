@@ -6,6 +6,6 @@
 
 #define JS_INIT_NET_MODULE js_init_module
 
-JSFullClassDef channelClass;
+JSFullClassDef netClass;
 
 #endif

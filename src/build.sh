@@ -73,6 +73,22 @@ sudo ldconfig
 
 
 # net模块
+#--------------------------------------------net模块-----------------------------------------------------
+# quickjs-net.c --->quickjs-net.o
+gcc -c -fPIC -o quickjs-net.o quickjs-net.c -I../include/vgapp -I../include/quickjs/master
+
+# version: 1.3.12 quickjs-net.o libnet.so ---> quickjs-net.so
+gcc -shared -o quickjs-net.so quickjs-net.o -lnet -L../lib/vgapp
+
+# 是为了在mqtt require的时候，去/home/zpf/software/upsilon-js/local路径找net.so
+sudo vi /etc/ld.so.conf
+/home/zpf/software/upsilon-js/local
+sudo /sbin/ldconfig -v
+sudo ldconfig
+#--------------------------------------------net模块-----------------------------------------------------
+
+
+# net模块
 
 
 
