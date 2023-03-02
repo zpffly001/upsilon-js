@@ -6,6 +6,12 @@
 // #include <soc/gpio.h>
 
 #include "export.h"
+enum gpio_function {
+    RED = 1,
+    GREEN = 2,
+    BLUE = 3
+};
+
 
 
 #ifdef	__cplusplus
