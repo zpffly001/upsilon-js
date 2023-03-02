@@ -13,5 +13,9 @@ function hh()
     console.log("gagagag")
 }
 
-net.netStatusCallbackRegister(hh, "hhhh");
-// net.netStatusCallbackRegister(hh, hh);
+var netInfo = {}
+netInfo.num = 77
+netInfo.name = "nnnnnnn"
+
+// net.netStatusCallbackRegister(hh, "hhhh");
+net.netStatusCallbackRegister(hh, netInfo);
