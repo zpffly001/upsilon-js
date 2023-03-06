@@ -5,5 +5,5 @@ import * as os from "os";
 var gpio = new gpioClass()
 
 gpio.gpioInit()
-var res = gpio.gpioRequest()
-console.log("res: ", res)
+// var res = gpio.gpioRequest()
+// console.log("res: ", res)
