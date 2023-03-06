@@ -9,3 +9,7 @@ gcc -shared -o channel.so channel.o
 # build net.c ---> net.so
 gcc -fPIC -o net.o -c net.c
 gcc -shared -o net.so net.o
+
+# build watchdog.c ---> watchdog.so
+gcc -fPIC -o watchdog.o -c watchdog.c
+gcc -shared -o watchdog.so watchdog.o

@@ -4,12 +4,16 @@
 
 #include "watchdog.h"
 
+char buf[2] = {0x55, 0x56};
 struct vbar_watchdog watdog;
+
+
 
 /* 打开看门狗设备 */
 struct vbar_watchdog *vbar_watchdog_open(int type, unsigned long arg)
 {
     printf("vbar_watchdog_open\n");
+    watdog.pdata = buf;
     return &watdog;
 }
 
@@ -24,6 +28,7 @@ bool vbar_watchdog_is_poweron(struct vbar_watchdog *wdt)
 bool vbar_watchdog_start(struct vbar_watchdog *wdt, int timeout_ms)
 {
     printf("vbar_watchdog_start\n");
+    ((char *)wdt->pdata)[1] = 0x57;
     return 1;
 }
 
