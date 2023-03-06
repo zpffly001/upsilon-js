@@ -68,18 +68,10 @@ static JSValue gpioSetFunc(JSContext *ctx, JSValueConst this_val, int argc, JSVa
 {
 
     int gpio;
-    int gpioFunction;
     enum gpio_function func;
 
     JS_ToInt32(ctx, &gpio, argv[0]);
-    JS_ToInt32(ctx, &gpioFunction, argv[1]);
-
-    if (gpioFunction == 0)
-    {
-        func = RED;
-    }else{
-        func = BLUE;
-    }
+    JS_ToInt32(ctx, &func, argv[1]);
 
     /* 设置指定gpio功能  param gpio  gpio值  param func  功能类型 */
     vbar_gpio_set_func(gpio, func);

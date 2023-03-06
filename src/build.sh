@@ -53,6 +53,11 @@ sudo vi /etc/ld.so.conf
 /home/zpf/software/upsilon-js/local
 sudo /sbin/ldconfig -v
 sudo ldconfig
+
+
+gcc -c -fPIC -o quickjs-gpio.o quickjs-gpio.c -I../include/vgapp -I../include/quickjs/master
+# 依赖gpio.o，这是ldd时不会发现gpio.so，nm -D xxx.so会发现使用到的gpio中的方法已经导出
+gcc -shared -o quickjs-gpio.so quickjs-gpio.o ../deps/vgapp/gpio.o
 #--------------------------------------------gpio模块-----------------------------------------------------
 
 
