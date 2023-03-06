@@ -93,7 +93,21 @@ sudo ldconfig
 #--------------------------------------------net模块-----------------------------------------------------
 
 
-# net模块
+
+# watchdog模块
+#--------------------------------------------watchdog模块-----------------------------------------------------
+# quickjs-watchdog.c --->quickjs-watchdog.o
+gcc -c -fPIC -o quickjs-watchdog.o quickjs-watchdog.c -I../include/vgapp -I../include/quickjs/master
+
+# version: 1.3.12 quickjs-watchdog.o libwatchdog.so ---> quickjs-watchdog.so
+gcc -shared -o quickjs-watchdog.so quickjs-watchdog.o -lwatchdog -L../lib/vgapp
+
+# 是为了在mqtt require的时候，去/home/zpf/software/upsilon-js/local路径找watchdog.so
+sudo vi /etc/ld.so.conf
+/home/zpf/software/upsilon-js/local
+sudo /sbin/ldconfig -v
+sudo ldconfig
+#--------------------------------------------net模块-----------------------------------------------------
 
 
 
