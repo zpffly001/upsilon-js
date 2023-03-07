@@ -11,17 +11,53 @@
 #include "keyboard.h"
 
 
+// static JSValue mgMqttClientEventGet(
+//     JSContext *ctx, JSValueConst this_val, int magic)
+// {
+//     mgMqttClientObj *state = getMgMqttClientObj(this_val);
+//     return JS_DupValue(ctx, state->events[magic]);
+// }
+
+// static JSValue mgMqttClientEventSet(
+//     JSContext *ctx, JSValueConst this_val, JSValueConst value, int magic)
+// {
+//     mgMqttClientObj *state = getMgMqttClientObj(this_val);
+//     JSValue ev = state->events[magic];
+//     if (!JS_IsUndefined(ev)) JS_FreeValue(ctx, ev);
+//     if (JS_IsFunction(ctx, value))
+//         state->events[magic] = JS_DupValue(ctx, value);
+//     else
+//         state->events[magic] = JS_UNDEFINED;
+//     return JS_UNDEFINED;
+// }
 
 
 /**
- * @brief 打开信道
+ * @brief keyboard初始化
  */
-static JSValue channelOpen(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv)
+static JSValue keyboardInit(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv)
 {
-
+// vbar_keyboard_init
     return JS_UNDEFINED;
 }
 
+/**
+ * @brief keyboard退出
+ */
+static JSValue keyboardExit(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv)
+{
+// vbar_keyboard_exit
+    return JS_UNDEFINED;
+}
+
+/**
+ * @brief keyboard设置回调函数
+ */
+static JSValue keyboardCallbackRegister(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv)
+{
+// vbar_keyboard_callback_register
+    return JS_UNDEFINED;
+}
 
 
 
@@ -37,7 +73,10 @@ static JSValue keyboardContructor(
 
 /* 类方法列表填充 */
 static const JSCFunctionListEntry keyboard_class_funcs[] = {
-    JS_CFUNC_DEF("channelOpen", 2, channelOpen),
+    JS_CFUNC_DEF("keyboardInit", 0, keyboardInit),
+    JS_CFUNC_DEF("keyboardExit", 0, keyboardExit),
+    JS_CFUNC_DEF("keyboardCallbackRegister", 2, keyboardCallbackRegister),
+    JS_CGETSET_MAGIC_DEF("onOpen", mgMqttClientEventGet, mgMqttClientEventSet, MG_MQTT_CLIENT_EVENT_ON_OPEN),
 };
 
 
