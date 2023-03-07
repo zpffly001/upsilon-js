@@ -10,8 +10,9 @@
 #include "quickjs-watchdog.h"
 #include "watchdog.h"
 
-
+JSClassID watchdogId;
 struct vbar_watchdog *wdt;
+JSValue watchdogJS;
 
 /**
  * @brief 打开看门狗设备
@@ -23,76 +24,79 @@ static JSValue watchdogOpen(JSContext *ctx, JSValueConst this_val, int argc, JSV
     JS_ToInt32(ctx, &type, argv[0]);
     JS_ToInt64(ctx, &arg, argv[1]);
     wdt = vbar_watchdog_open(type, arg);
-    return JS_NewInt32(ctx, 1);
+    watchdogJS = JS_NewObjectClass(ctx, watchdogClass.id);
+    JS_SetOpaque(watchdogJS, wdt);
+
+    return watchdogJS;
 }
 
-// /**
-//  * @brief 判断是否是上电复位
-//  */
-// static JSValue watchdogIsPoweron(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv)
-// {
-//     wdt = JS_VALUE_GET_PTR(argv[0]);
-//     bool isPoweron = vbar_watchdog_is_poweron(wdt);
-//     return JS_NewBool(ctx, isPoweron);
-// }
+/**
+ * @brief 判断是否是上电复位
+ */
+static JSValue watchdogIsPoweron(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv)
+{
+    wdt = JS_GetOpaque(argv[0], watchdogClass.id);
+    bool isPoweron = vbar_watchdog_is_poweron(wdt);
+    return JS_NewBool(ctx, isPoweron);
+}
 
-// /**
-//  * @brief 开启看门狗总定时器
-//  */
-// static JSValue watchdogStart(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv)
-// {
-//     int timeout;
-//     wdt = JS_VALUE_GET_PTR(argv[0]);
-//     JS_Toint32(ctx, &timeout, argv[1]);
-//     vbar_watchdog_start(wdt, timeout);
-//     return JS_UNDEFINED;
-// }
+/**
+ * @brief 开启看门狗总定时器
+ */
+static JSValue watchdogStart(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv)
+{
+    int timeout;
+    wdt = JS_GetOpaque(argv[0], watchdogClass.id);
+    JS_ToInt32(ctx, &timeout, argv[1]);
+    vbar_watchdog_start(wdt, timeout);
+    return JS_UNDEFINED;
+}
 
-// /**
-//  * @brief 关闭看门狗总定时器
-//  */
-// static JSValue watchdogStop(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv)
-// {
-//     wdt = JS_VALUE_GET_PTR(argv[0]);
-//     vbar_watchdog_stop(wdt);
-//     return JS_UNDEFINED;
-// }
+/**
+ * @brief 关闭看门狗总定时器
+ */
+static JSValue watchdogStop(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv)
+{
+    wdt = JS_GetOpaque(argv[0], watchdogClass.id);
+    vbar_watchdog_stop(wdt);
+    return JS_UNDEFINED;
+}
 
-// /**
-//  * @brief 控制指定通道开关
-//  */
-// static JSValue watchdogEnable(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv)
-// {
-//     unsigned int chan;
-//     wdt = JS_VALUE_GET_PTR(argv[0]);
-//     JS_Toint32(ctx, &chan, argv[1]);
-//     int toset = JS_ToBool(ctx, argv[2]);
+/**
+ * @brief 控制指定通道开关
+ */
+static JSValue watchdogEnable(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv)
+{
+    unsigned int chan;
+    wdt = JS_GetOpaque(argv[0], watchdogClass.id);
+    JS_ToInt32(ctx, &chan, argv[1]);
+    int toset = JS_ToBool(ctx, argv[2]);
 
-//     int res = vbar_watchdog_enable(wdt, chan, toset);
-//     return JS_NewBool(ctx, res);
-// }
+    int res = vbar_watchdog_enable(wdt, chan, toset);
+    return JS_NewBool(ctx, res);
+}
 
-// /**
-//  * @brief 喂狗指定通道
-//  */
-// static JSValue watchdogRestart(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv)
-// {
-//     unsigned int chan;
-//     wdt = JS_VALUE_GET_PTR(argv[0]);
-//     JS_Toint32(ctx, &chan, argv[1]);
-//     int res = vbar_watchdog_restart(wdt, chan);
-//     return JS_NewBool(ctx, res);
-// }
+/**
+ * @brief 喂狗指定通道
+ */
+static JSValue watchdogRestart(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv)
+{
+    unsigned int chan;
+    wdt = JS_GetOpaque(argv[0], watchdogClass.id);
+    JS_ToInt32(ctx, &chan, argv[1]);
+    int res = vbar_watchdog_restart(wdt, chan);
+    return JS_NewBool(ctx, res);
+}
 
-// /**
-//  * @brief 关闭看门狗设备
-//  */
-// static JSValue watchdogClose(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv)
-// {
-//     wdt = JS_VALUE_GET_PTR(argv[0]);
-//     vbar_watchdog_close(wdt);
-//     return JS_UNDEFINED;
-// }
+/**
+ * @brief 关闭看门狗设备
+ */
+static JSValue watchdogClose(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv)
+{
+    wdt = JS_GetOpaque(argv[0], watchdogClass.id);
+    vbar_watchdog_close(wdt);
+    return JS_UNDEFINED;
+}
 
 
 /* 构造方法 */
@@ -108,6 +112,11 @@ static JSValue watchdogContructor(
 /* 类方法列表填充 */
 static const JSCFunctionListEntry watchdog_class_funcs[] = {
     JS_CFUNC_DEF("watchdogOpen", 2, watchdogOpen),
+    JS_CFUNC_DEF("watchdogIsPoweron", 1, watchdogIsPoweron),
+    JS_CFUNC_DEF("watchdogStart", 2, watchdogStart),
+    JS_CFUNC_DEF("watchdogEnable", 3, watchdogEnable),
+    JS_CFUNC_DEF("watchdogRestart", 2, watchdogRestart),
+    JS_CFUNC_DEF("watchdogClose", 1, watchdogClose),
 };
 
 
