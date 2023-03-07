@@ -76,7 +76,7 @@ static const JSCFunctionListEntry keyboard_class_funcs[] = {
     JS_CFUNC_DEF("keyboardInit", 0, keyboardInit),
     JS_CFUNC_DEF("keyboardExit", 0, keyboardExit),
     JS_CFUNC_DEF("keyboardCallbackRegister", 2, keyboardCallbackRegister),
-    JS_CGETSET_MAGIC_DEF("onOpen", mgMqttClientEventGet, mgMqttClientEventSet, MG_MQTT_CLIENT_EVENT_ON_OPEN),
+    // JS_CGETSET_MAGIC_DEF("onOpen", mgMqttClientEventGet, mgMqttClientEventSet, MG_MQTT_CLIENT_EVENT_ON_OPEN),
 };
 
 
@@ -89,7 +89,7 @@ JSFullClassDef keyboardClass = {
     },
     .constructor = { keyboardContructor, .args_count = 1 },
     .funcs_len = sizeof(keyboard_class_funcs),
-    .funcs = keyboard_class_funcs
+    // .funcs = keyboard_class_funcs
 };
 
 
