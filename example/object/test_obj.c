@@ -48,6 +48,13 @@ static JSValue js_get_obj(JSContext *ctx, JSValueConst this_val,
     JS_SetPropertyStr(ctx, modeObj2, "modeName", JS_NewString(ctx, "xiaowang"));
     JS_SetPropertyStr(ctx, obj, "mymode2", modeObj2);
 
+    struct mode *modePoint;
+    modePoint->modeName = "cxk";
+    modePoint->modeNum = 250;
+    // JSValue modePoint =
+    // JSValue mymodePoint = JS_NewObject(ctx);
+    // JS_SetOpaque(mymodePoint, modePoint);
+
     // use the JSValue object...
     return obj;
 }
