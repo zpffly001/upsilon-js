@@ -4,6 +4,8 @@ import * as os from "os";
 
 var watchdog = new watchdogClass()
 
-watchdog.watchdogOpen(1, 1);
+var wdt = watchdog.watchdogOpen(1, 1);
+watchdog.watchdogStart(wdt)
+watchdog.watchdogIsPoweron(wdt, 3000)
 // var res = gpio.gpioRequest()
 // console.log("res: ", res)
