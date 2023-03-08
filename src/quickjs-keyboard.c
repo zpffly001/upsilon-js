@@ -10,35 +10,41 @@
 #include "quickjs-keyboard.h"
 #include "keyboard.h"
 
+JSValue events[100];
+JSContext *current;
 
-// static JSValue mgMqttClientEventGet(
-//     JSContext *ctx, JSValueConst this_val, int magic)
-// {
-//     mgMqttClientObj *state = getMgMqttClientObj(this_val);
-//     return JS_DupValue(ctx, state->events[magic]);
-// }
+static JSValue eventGet(JSContext *ctx, JSValueConst this_val, int magic)
+{
+    return JS_DupValue(ctx, events[magic]);
+}
 
-// static JSValue mgMqttClientEventSet(
-//     JSContext *ctx, JSValueConst this_val, JSValueConst value, int magic)
-// {
-//     mgMqttClientObj *state = getMgMqttClientObj(this_val);
-//     JSValue ev = state->events[magic];
-//     if (!JS_IsUndefined(ev)) JS_FreeValue(ctx, ev);
-//     if (JS_IsFunction(ctx, value))
-//         state->events[magic] = JS_DupValue(ctx, value);
-//     else
-//         state->events[magic] = JS_UNDEFINED;
-//     return JS_UNDEFINED;
-// }
+static JSValue eventSet(JSContext *ctx, JSValueConst this_val, JSValueConst value, int magic)
+{
+    if (JS_IsFunction(ctx, value))
+        events[magic] = JS_DupValue(ctx, value);
+    else
+        events[magic] = JS_UNDEFINED;
+    return JS_UNDEFINED;
+}
 
+/**
+ * @brief keyboard回调函数
+ */
+void keyPressCallback(struct input_event *key, void *pdata)
+{
+    JSValue argv[2];
+    argv[0] = JS_NewString(current, "TODO");
+    argv[1] = JS_NewString(current, "TODO");
+    JS_Call(current, events[0], JS_UNDEFINED, 2, argv);
+}
 
 /**
  * @brief keyboard初始化
  */
 static JSValue keyboardInit(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv)
 {
-// vbar_keyboard_init
-    return JS_UNDEFINED;
+    int res = vbar_keyboard_init();
+    return JS_NewInt32(ctx, res);
 }
 
 /**
@@ -46,7 +52,7 @@ static JSValue keyboardInit(JSContext *ctx, JSValueConst this_val, int argc, JSV
  */
 static JSValue keyboardExit(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv)
 {
-// vbar_keyboard_exit
+    vbar_keyboard_exit();
     return JS_UNDEFINED;
 }
 
@@ -55,8 +61,11 @@ static JSValue keyboardExit(JSContext *ctx, JSValueConst this_val, int argc, JSV
  */
 static JSValue keyboardCallbackRegister(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv)
 {
-// vbar_keyboard_callback_register
-    return JS_UNDEFINED;
+    key_press_cb func = keyPressCallback;
+    void *pdata = JS_ToCString(ctx, argv[0]);
+    current = ctx;
+    int res = vbar_keyboard_callback_register(func, pdata);
+    return JS_NewInt32(ctx, res);
 }
 
 
@@ -76,7 +85,7 @@ static const JSCFunctionListEntry keyboard_class_funcs[] = {
     JS_CFUNC_DEF("keyboardInit", 0, keyboardInit),
     JS_CFUNC_DEF("keyboardExit", 0, keyboardExit),
     JS_CFUNC_DEF("keyboardCallbackRegister", 2, keyboardCallbackRegister),
-    // JS_CGETSET_MAGIC_DEF("onOpen", mgMqttClientEventGet, mgMqttClientEventSet, MG_MQTT_CLIENT_EVENT_ON_OPEN),
+    JS_CGETSET_MAGIC_DEF("callbackInit", NULL, eventSet, 0),
 };
 
 
@@ -89,7 +98,7 @@ JSFullClassDef keyboardClass = {
     },
     .constructor = { keyboardContructor, .args_count = 1 },
     .funcs_len = sizeof(keyboard_class_funcs),
-    // .funcs = keyboard_class_funcs
+    .funcs = keyboard_class_funcs
 };
 
 
