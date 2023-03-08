@@ -13,3 +13,11 @@ gcc -shared -o net.so net.o
 # build watchdog.c ---> watchdog.so
 gcc -fPIC -o watchdog.o -c watchdog.c
 gcc -shared -o watchdog.so watchdog.o
+
+# build keyboard.c ---> libkeyboard.so
+gcc -fPIC -o keyboard.o -c keyboard.c
+gcc -shared -o libkeyboard.so keyboard.o
+
+# build sysinfo.c ---> libsysinfo.so
+gcc -fPIC -o sysinfo.o -c sysinfo.c
+gcc -shared -o libsysinfo.so sysinfo.o
