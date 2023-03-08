@@ -107,7 +107,40 @@ sudo vi /etc/ld.so.conf
 /home/zpf/software/upsilon-js/local
 sudo /sbin/ldconfig -v
 sudo ldconfig
-#--------------------------------------------net模块-----------------------------------------------------
+#--------------------------------------------watchdog模块-----------------------------------------------------
+
+
+
+# keyboard模块
+#--------------------------------------------keyboard模块-----------------------------------------------------
+# quickjs-keyboard.c --->quickjs-keyboard.o
+gcc -c -fPIC -o quickjs-keyboard.o quickjs-keyboard.c -I../include/vgapp -I../include/quickjs/master
+
+# version: 1.3.12 quickjs-keyboard.o libkeyboard.so ---> quickjs-keyboard.so
+gcc -shared -o quickjs-keyboard.so quickjs-keyboard.o -lkeyboard -L../lib/vgapp
+
+# 是为了在mqtt require的时候，去/home/zpf/software/upsilon-js/local路径找keyboard.so
+sudo vi /etc/ld.so.conf
+/home/zpf/software/upsilon-js/local
+sudo /sbin/ldconfig -v
+sudo ldconfig
+#--------------------------------------------keyboard模块-----------------------------------------------------
+
+
+# sysinfo模块
+#--------------------------------------------sysinfo模块-----------------------------------------------------
+# quickjs-sysinfo.c --->quickjs-sysinfo.o
+gcc -c -fPIC -o quickjs-sysinfo.o quickjs-sysinfo.c -I../include/vgapp -I../include/quickjs/master
+
+# version: 1.3.12 quickjs-sysinfo.o libsysinfo.so ---> quickjs-sysinfo.so
+gcc -shared -o quickjs-sysinfo.so quickjs-sysinfo.o -lsysinfo -L../lib/vgapp
+
+# 是为了在mqtt require的时候，去/home/zpf/software/upsilon-js/local路径找sysinfo.so
+sudo vi /etc/ld.so.conf
+/home/zpf/software/upsilon-js/local
+sudo /sbin/ldconfig -v
+sudo ldconfig
+#--------------------------------------------sysinfo模块-----------------------------------------------------
 
 
 
